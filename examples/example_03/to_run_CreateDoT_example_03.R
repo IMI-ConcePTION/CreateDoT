@@ -1,5 +1,5 @@
 -------------------------------
-# example 2: recipe 2
+# example 3: recipe 3
 
 rm(list=ls(all.names=TRUE))
 
@@ -24,11 +24,10 @@ input <-fread(paste0(thisdir,"/input/input.csv"), sep = ",")
 #USE 
 
 output <- CreateDOT(dataframe = input, 
-                    recipe = 2, 
-                    output_var = DOT_recipe_2, 
+                    recipe = 3, 
+                    output_var = DOT_recipe_3, 
                     disp_num_medicinal_product = disp_num_medicinal_product,  
-                    unit_of_presentation_num = unit_of_presentation_num, 
-                    subst_amount_per_form = subst_amount_per_form,
+                    total_amount_per_medicinal_product = total_amount_per_medicinal_product,
                     unit_subst_amount_per_form = unit_subst_amount_per_form,
                     dd = dd,
                     unit_dd = unit_dd
