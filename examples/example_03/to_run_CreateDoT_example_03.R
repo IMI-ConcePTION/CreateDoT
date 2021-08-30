@@ -13,7 +13,7 @@ setwd("..")
 setwd("..")
 dirbase<-getwd()
 #load function
-source(paste0(dirbase,"/CreateDOT_v1.R"))
+source(paste0(dirbase,"/CreateDOT.R"))
 
 # load data.table
 if (!require("data.table")) install.packages("data.table")
@@ -28,13 +28,13 @@ input <-fread(paste0(thisdir,"/input/input.csv"), sep = ",")
 #USE 
 
 output <- CreateDOT(dataframe = input, 
-                    recipe = 3, 
+                    recipe = "Total substance amount", 
                     output_var = "DOT_recipe_3", 
                     disp_num_medicinal_product = "disp_num_medicinal_product",  
                     total_amount_per_medicinal_product = "total_amount_per_medicinal_product",
                     unit_subst_amount_per_form = "unit_subst_amount_per_form",
                     dd = "dd",
-                    unit_dd = "unit_dd"
+                    dd_unit = "unit_dd"
                     )  
 
 View(output)

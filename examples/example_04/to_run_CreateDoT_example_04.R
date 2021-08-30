@@ -12,7 +12,7 @@ setwd("..")
 setwd("..")
 dirbase<-getwd()
 #load function
-source(paste0(dirbase,"/CreateDOT_v1.R"))
+source(paste0(dirbase,"/CreateDOT.R"))
 
 # load data.table
 if (!require("data.table")) install.packages("data.table")
@@ -26,14 +26,14 @@ input <-fread(paste0(thisdir,"/input/input.csv"), sep = ",")
 #USE 
 
 output <- CreateDOT(dataframe = input, 
-                    recipe = 4, 
+                    recipe = "Prescribed quantity-DD calculation", 
                     output_var = "DOT_recipe_4", 
-                    output_dd1 = "output_dd1", # ask whether we want to add an option of converting the output_ddX to a specific unit of measurement; if we don't, the variable will have as a unit of measurement the same unit
+                    output_dd1 = "output_dd1", 
                     disp_num_medicinal_product = "disp_num_medicinal_product",
                     unit_of_presentation_num = "unit_of_presentation_num", 
                     presc_quantity_per_day = "presc_quantity_per_day", 
                     subst_amount_per_form_subst1 = "subst_amount_per_form_subst1",
-                    subst1_amount_unit = "subst1_amount_unit"
+                    subst_amount_per_form_subst1_unit = "subst1_amount_unit"
                     )  
 
 View(output)
