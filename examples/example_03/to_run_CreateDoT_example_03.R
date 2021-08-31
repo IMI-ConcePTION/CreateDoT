@@ -32,7 +32,7 @@ output <- CreateDOT(dataframe = input,
                     output_var = "DOT_recipe_3", 
                     disp_num_medicinal_product = "disp_num_medicinal_product",  
                     total_amount_per_medicinal_product = "total_amount_per_medicinal_product",
-                    unit_subst_amount_per_form = "unit_subst_amount_per_form",
+                    subst_amount_per_form_unit = "unit_subst_amount_per_form",
                     dd = "dd",
                     dd_unit = "unit_dd"
                     )  
