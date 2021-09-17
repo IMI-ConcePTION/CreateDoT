@@ -110,6 +110,7 @@ if (recipe == "Prescribed quantity-DD calculation") {
       }
       dataframe<-merge(dataframe,rescale_table,all.x=T,by.x=c(subst_amount_per_form_subst2_unit),by.y=c("first_unit"))
       if (sum(!is.na(dataframe[,rescale_factor]))>0) message("The units of measurement has been rescaled to compute the correct number of days of treatment")
+      #compute dd for second active principle
       dataframe[is.na(rescale_factor),rescale_factor:=1]
       dataframe[,(output_dd2):=get(subst_amount_per_form_subst2) * get(presc_quantity_per_day) *rescale_factor]
     }
@@ -122,9 +123,11 @@ if (recipe == "Prescribed quantity-DD calculation") {
      }
     dataframe<-merge(dataframe,rescale_table,all.x=T,by.x=c(subst_amount_per_form_subst3_unit),by.y=c("first_unit"))
     if (sum(!is.na(dataframe[,rescale_factor]))>0) message("The units of measurement has been rescaled to compute the correct number of days of treatment")
+    #compute dd for third active principle
     dataframe[is.na(rescale_factor),rescale_factor:=1]
     dataframe[,(output_dd3):=get(subst_amount_per_form_subst3) * get(presc_quantity_per_day) *rescale_factor]
   } 
+  #compute the specific recipe formula
   dataframe[,(output_var):=get(disp_num_medicinal_product) * get(unit_of_presentation_num) / get(presc_quantity_per_day)]
 }
 
