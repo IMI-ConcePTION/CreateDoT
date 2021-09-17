@@ -44,9 +44,11 @@
 
   
   if (recipe == "Prescribed quantity") {
+    #check that all mandatory variables are present 
     if (is.null(disp_num_medicinal_product) | is.null(unit_of_presentation_num) | is.null(presc_quantity_per_day)) {
       stop("For Recipe 'Prescribed quantity', arguments disp_num_medicinal_product, unit_of_presentation_num, presc_quantity_per_day must be specified")
    }else{
+     #compute the specific recipe formula
      if (disp_num_medicinal_product==1) {
        warning("The parameter disp_num_medicinal_product is set to 1")
      dataframe[,(output_var):=1 * get(unit_of_presentation_num) / get(presc_quantity_per_day)]
@@ -56,12 +58,14 @@
   }
 }
  if (recipe == "Substance amount") {
-   #dataframe<-tolower(dataframe[,..subst_amount_per_form_unit])
+   # dataframe<-tolower(dataframe[,..subst_amount_per_form_unit])
+   #check that all mandatory variables are present and that all the units of measurement are supported
   if (is.null(disp_num_medicinal_product) | is.null(subst_amount_per_form) | is.null(unit_of_presentation_num) | is.null(dd) | is.null(subst_amount_per_form_unit) | is.null(dd_unit) ) {
     stop("For Recipe 'Substance amount' all the arguments disp_num_medicinal_product, subst_amount_per_form, unit_of_presentation_num,subst_amount_per_form_unit dd and dd_unit must be specified") #are unit of measurement also mandatory right?
    } else if (nrow(dataframe[get(subst_amount_per_form_unit)  %!in% units_included,])>0 | nrow(dataframe[get(dd_unit) %!in% units_included,])>0 ) {
      stop(paste0("The units of measurement inputted are not supported by the function (see the documentation for the complete list).Please check the input data"))
    } 
+   #compute the specific recipe formula
    dataframe<-merge(dataframe,rescale_table,all.x=T,by.x=c(subst_amount_per_form_unit,dd_unit),by.y=c("first_unit","second_unit"))
    if (sum(!is.na(dataframe[,rescale_factor]))>0) message("The units of measurement has been rescaled to compute the correct number of days of treatment")
    dataframe[is.na(rescale_factor),rescale_factor:=1]
@@ -78,6 +82,7 @@
     warning("The units of measurement has been rescaled to compute the correct number of days of treatment") 
     dataframe[str_detect(get(subst_amount_per_form_subst1_unit), "^g") ,(output_dd1):=get(subst_amount_per_form_subst1) * get(presc_quantity_per_day)*1000]
   }
+   #compute the specific recipe formula
    dataframe<-merge(dataframe,rescale_table,all.x=T,by.x=c(subst_amount_per_form_unit,dd_unit),by.y=c("first_unit","second_unit"))
    if (sum(!is.na(dataframe[,rescale_factor]))>0) message("The units of measurement has been rescaled to compute the correct number of days of treatment")
    dataframe[is.na(rescale_factor),rescale_factor:=1]
@@ -92,10 +97,11 @@ if (recipe == "Prescribed quantity-DD calculation") {
     stop(paste0("The units of measurement inputted are not supported by the function (see the documentation for the complete list).Please check the input data"))
   } else if (nrow(dataframe[get(subst_amount_per_form_subst1_unit)  %!in% standard_unit,])>0 ) {
     message("The units of measurement has been rescaled to compute the correct number of days of treatment") 
+    #compute the specific recipe formula
     dataframe[get(subst_amount_per_form_subst1_unit)=="g" ,(output_dd1):=get(subst_amount_per_form_subst1) * get(presc_quantity_per_day)*1000]
     dataframe[!str_detect(get(subst_amount_per_form_subst1_unit), "^g") ,(output_dd1):=get(subst_amount_per_form_subst1) * get(presc_quantity_per_day)]
   }
-
+ #if the second active principle is present
     if (!is.null(subst_amount_per_form_subst2)){
       if (is.null(subst_amount_per_form_subst2_unit)) {
         stop("For Recipe 'Prescribed quantity-DD calculation', argument subst_amount_per_form_subst2_unit must be specified")
@@ -107,7 +113,7 @@ if (recipe == "Prescribed quantity-DD calculation") {
       dataframe[is.na(rescale_factor),rescale_factor:=1]
       dataframe[,(output_dd2):=get(subst_amount_per_form_subst2) * get(presc_quantity_per_day) *rescale_factor]
     }
-  
+#if the third active principle is present
   if (!is.null(subst_amount_per_form_subst3)){
     if (is.null(subst_amount_per_form_subst3_unit)) {
       stop("For Recipe 'Prescribed quantity-DD calculation', argument subst_amount_per_form_subst3_unit must be specified")
@@ -119,15 +125,7 @@ if (recipe == "Prescribed quantity-DD calculation") {
     dataframe[is.na(rescale_factor),rescale_factor:=1]
     dataframe[,(output_dd3):=get(subst_amount_per_form_subst3) * get(presc_quantity_per_day) *rescale_factor]
   } 
-  
-  # dataframe<-merge(dataframe,rescale_table,all.x=T,by.x=c(subst_amount_per_form_subst1_unit),by.y=c("first_unit"))
-  # if (sum(!is.na(dataframe[,rescale_factor]))>0) message("The units of measurement has been rescaled to compute the correct number of days of treatment")
-  # dataframe[is.na(rescale_factor),rescale_factor:=1]
-  # dataframe[,(output_dd1):=get(subst_amount_per_form_subst1) * get(presc_quantity_per_day) *rescale_factor]
   dataframe[,(output_var):=get(disp_num_medicinal_product) * get(unit_of_presentation_num) / get(presc_quantity_per_day)]
-  # dataframe[,rescale_factor:=NULL]
-  # setcolorder(dataframe,col_order)
-  
 }
 
 for (col in colnames(dataframe)){
