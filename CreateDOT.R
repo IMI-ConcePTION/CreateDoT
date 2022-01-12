@@ -74,9 +74,9 @@
  }
 
  if (recipe == "Total substance amount") {
-  if (is.null(disp_num_medicinal_product) | is.null(total_amount_per_medicinal_product)  | is.null(dd) | is.null(subst_amount_per_form_unit) | is.null(dd_unit)) {
-  stop("For Recipe 'Total substance amount', arguments disp_num_medicinal_product, total_amount_per_medicinal_product, unit_of_presentation_num, dd, subst_amount_per_form_unit and dd_unit must be specified")
-  } else if (nrow(dataframe[get(subst_amount_per_form_unit)  %!in% units_included,])>0 | nrow(dataframe[get(dd_unit) %!in% units_included,])>0 ) {
+  if (is.null(disp_num_medicinal_product) | is.null(total_amount_per_medicinal_product)  | is.null(dd) | is.null(total_amount_per_medicinal_product_unit) | is.null(dd_unit)) {
+  stop("For Recipe 'Total substance amount', arguments disp_num_medicinal_product, total_amount_per_medicinal_product, unit_of_presentation_num, dd, total_amount_per_medicinal_product_unit and dd_unit must be specified")
+  } else if (nrow(dataframe[get(total_amount_per_medicinal_product_unit)  %!in% units_included,])>0 | nrow(dataframe[get(dd_unit) %!in% units_included,])>0 ) {
     stop("The units of measurement inputted are not supported by the function (see the documentation for the complete list).Please check the input data") 
   } else if (nrow(dataframe[get(subst_amount_per_form_subst1_unit)  %!in% standard_unit,])>0 ) {
     warning("The units of measurement has been rescaled to compute the correct number of days of treatment") 
