@@ -1,0 +1,3 @@
+medicinal_product_name,disp_num_medicinal_product,dd,unit_dd,unit_of_presentation_type,unit_of_presentation_num,administration_dose_form,subst1_amount_per_form,subst1_amount_unit,subst1_concentration,subst1_concentration_unit,Concentration_total_content,Concentration_total_content_unit,DOT_recipe_1,CALCULATE_DD_subst1,CALCULATE_DD_subst1_unit
+"LUMIGAN*COLL30FL0,4ML 0,3MG/ML ",2,1,container,container,30,drops,1.2,mg,0.3,mg/ml,0.4,ml,60,1.2,mg
+"ELIQUIS*20CPR RIV 2,5MG",1,2,tablet,tablet,20,tablet,2.5,mg,0,,,,10,5,mg

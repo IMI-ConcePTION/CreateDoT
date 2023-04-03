@@ -1,29 +1,40 @@
 #aggiungi equivalenza da g a mg
 
-               CreateDOT <- function(dataframe, 
-                                     recipe , 
-                                     filter_var=NULL ,
-                                     list_values=NULL ,
-                                     output_var="days_of_treatment" , 
-                                     disp_num_medicinal_product=NULL, 
-                                     total_amount_per_medicinal_product=NULL,
-                                     total_amount_per_medicinal_product_unit=NULL,
-                                     unit_of_presentation_num=NULL, 
-                                     subst_amount_per_form=NULL,
-                                     subst_amount_per_form_subst1=NULL,
-                                     subst_amount_per_form_subst2=NULL,
-                                     subst_amount_per_form_subst3=NULL,
-                                     subst_amount_per_form_subst1_unit=NULL,
-                                     subst_amount_per_form_subst2_unit=NULL,
-                                     subst_amount_per_form_subst3_unit=NULL,
-                                     subst_amount_per_form_unit=NULL, 
-                                     dd=NULL,
-                                     dd_unit=NULL,
-                                     presc_quantity_per_day=NULL,
-                                     output_dd1="output_dd1",
-                                     output_dd2="output_dd2",
-                                     output_dd3="output_dd3"
-                      ) {
+CreateDOT <- function(dataframe, 
+                      recipe , 
+                      filter_var=NULL ,
+                      list_values=NULL ,
+                      output_var="days_of_treatment" , 
+                      disp_num_medicinal_product=NULL, 
+                      total_amount_per_medicinal_product=NULL,
+                      total_amount_per_medicinal_product_unit=NULL,
+                      unit_of_presentation_num=NULL, 
+                      unit_of_presentation_type=NULL,
+                      subst_amount_per_form_subst1=NULL,
+                      subst_amount_per_form_subst2=NULL,
+                      subst_amount_per_form_subst3=NULL,
+                      subst_amount_per_form_subst1_unit=NULL,
+                      subst_amount_per_form_subst2_unit=NULL,
+                      subst_amount_per_form_subst3_unit=NULL,
+                      concentration_subst1=NULL,
+                      concentration_subst2=NULL,
+                      concentration_subst3=NULL,
+                      concentration_subst1_unit=NULL,
+                      concentration_subst2_unit=NULL,
+                      concentration_subst3_unit=NULL,
+                      concentration_total_content=NULL,
+                      concentration_total_content_unit=NULL,
+                      dd=NULL,
+                      dd_unit=NULL,
+                      presc_quantity_per_day=NULL,
+                      output_dd1="CALCULATE_DD_subst1",
+                      output_dd2="CALCULATE_DD_subst2",
+                      output_dd3="CALCULATE_DD_subst3",
+                      output_dd1_unit="CALCULATE_DD_subst1_unit",
+                      output_dd2_unit="CALCULATE_DD_subst2_unit",
+                      output_dd3_unit="CALCULATE_DD_subst3_unit"
+) {
+  list_parameters_names<-c("disp_num_medicinal_product","total_amount_per_medicinal_product","unit_of_presentation_num", "total_amount_per_medicinal_product_unit","subst_amount_per_form_subst1", "subst_amount_per_form_subst1_unit","subst_amount_per_form_subst2", "subst_amount_per_form_subst2_unit","subst_amount_per_form_subst3", "subst_amount_per_form_subst3_unit", "dd","dd_unit", "presc_quantity_per_day", "concentration_subst1","concentration_subst2",                  "concentration_subst3", "concentration_subst1_unit", "concentration_subst2_unit",                            "concentration_subst3_unit", "concentration_total_content",                        "concentration_total_content_unit")
   
   library(stringr)
   '%!in%' <- function(x,y)!('%in%'(x,y))
@@ -34,91 +45,109 @@
   
   standard_unit<-c("mg","ml")
   
-  list_parameters_names<-c("disp_num_medicinal_product","total_amount_per_medicinal_product","unit_of_presentation_num", "subst_amount_per_form", "subst_amount_per_form_unit","subst_amount_per_form_subst1", "subst_amount_per_form_subst1_unit","subst_amount_per_form_subst2", "subst_amount_per_form_subst2_unit","subst_amount_per_form_subst3", "subst_amount_per_form_subst3_unit", "dd","dd_unit", "presc_quantity_per_day")
+  list_parameters_names<-c("disp_num_medicinal_product","total_amount_per_medicinal_product","unit_of_presentation_num", "subst_amount_per_form", "subst_amount_per_form_unit","subst_amount_per_form_subst1", "subst_amount_per_form_subst1_unit","subst_amount_per_form_subst2", "subst_amount_per_form_subst2_unit","subst_amount_per_form_subst3", "subst_amount_per_form_subst3_unit", "dd","dd_unit", "presc_quantity_per_day", "concentration_subst1","concentration_subst2",                  "concentration_subst3", "concentration_subst1_unit", "concentration_subst2_unit",                            "concentration_subst3_unit", "concentration_total_content",                        "concentration_total_content_unit")
   for (col in colnames(dataframe)){
     if (col %in% list_parameters_names) {
       setnames(dataframe,col,paste0(col,999))
       assign(col,paste0(col,999))
     }
   }
-
   
-  if (recipe == "Prescribed quantity") {
+  
+  if (recipe == "Units of presentations per day") {
     #check that all mandatory variables are present 
-    if (is.null(disp_num_medicinal_product) | is.null(unit_of_presentation_num) | is.null(presc_quantity_per_day)) {
-      stop("For Recipe 'Prescribed quantity', arguments disp_num_medicinal_product, unit_of_presentation_num, presc_quantity_per_day must be specified")
-   }else{
-     #compute the specific recipe formula
-     dataframe[,(output_var):=get(disp_num_medicinal_product) * get(unit_of_presentation_num) / get(presc_quantity_per_day)] 
-  }
-}
- if (recipe == "Substance amount") {
-   # dataframe<-tolower(dataframe[,..subst_amount_per_form_unit])
-   #check that all mandatory variables are present and that all the units of measurement are supported
-  if (is.null(disp_num_medicinal_product) | is.null(subst_amount_per_form) | is.null(unit_of_presentation_num) | is.null(dd) | is.null(subst_amount_per_form_unit) | is.null(dd_unit) ) {
-    stop("For Recipe 'Substance amount' all the arguments disp_num_medicinal_product, subst_amount_per_form, unit_of_presentation_num,subst_amount_per_form_unit dd and dd_unit must be specified") #are unit of measurement also mandatory right?
-   } else if (nrow(dataframe[get(subst_amount_per_form_unit)  %!in% units_included,])>0 | nrow(dataframe[get(dd_unit) %!in% units_included,])>0 ) {
-     stop(paste0("The units of measurement inputted are not supported by the function (see the documentation for the complete list).Please check the input data"))
-   } 
-   #compute the specific recipe formula
-   dataframe<-merge(dataframe,rescale_table,all.x=T,by.x=c(subst_amount_per_form_unit,dd_unit),by.y=c("first_unit","second_unit"))
-   if (sum(!is.na(dataframe[,rescale_factor]))>0) message("The units of measurement has been rescaled to compute the correct number of days of treatment")
-   dataframe[is.na(rescale_factor),rescale_factor:=1]
-   dataframe[,(output_var):=get(disp_num_medicinal_product) * get(subst_amount_per_form) * get(unit_of_presentation_num) / get(dd)*rescale_factor][,rescale_factor:=NULL]
-   setcolorder(dataframe,col_order)
- }
+    if (is.null(disp_num_medicinal_product) | is.null(unit_of_presentation_num) | is.null(dd)) {
+      stop("For Recipe 'Prescribed quantity', arguments disp_num_medicinal_product, unit_of_presentation_num, dd must be specified")
+    }else{
+      #compute the specific recipe formula
+      dataframe[,(output_var):=get(disp_num_medicinal_product) * get(unit_of_presentation_num) / get(dd)] 
 
- if (recipe == "Total substance amount") {
-  if (is.null(disp_num_medicinal_product) | is.null(total_amount_per_medicinal_product)  | is.null(dd) | is.null(total_amount_per_medicinal_product_unit) | is.null(dd_unit)) {
-  stop("For Recipe 'Total substance amount', arguments disp_num_medicinal_product, total_amount_per_medicinal_product, unit_of_presentation_num, dd, total_amount_per_medicinal_product_unit and dd_unit must be specified")
-  } else if (nrow(dataframe[get(total_amount_per_medicinal_product_unit)  %!in% units_included,])>0 | nrow(dataframe[get(dd_unit) %!in% units_included,])>0 ) {
-    stop("The units of measurement inputted are not supported by the function (see the documentation for the complete list).Please check the input data") 
-  } 
-   #compute the specific recipe formula
-   dataframe<-merge(dataframe,rescale_table,all.x=T,by.x=c(total_amount_per_medicinal_product_unit,dd_unit),by.y=c("first_unit","second_unit"))
-   if (sum(!is.na(dataframe[,rescale_factor]))>0) message("The units of measurement has been rescaled to compute the correct number of days of treatment")
-   dataframe[is.na(rescale_factor),rescale_factor:=1]
-   dataframe[,(output_var):=get(disp_num_medicinal_product) * get(total_amount_per_medicinal_product) / get(dd)*rescale_factor][,rescale_factor:=NULL]
-   setcolorder(dataframe,col_order)
-  }
-  
-if (recipe == "Prescribed quantity-DD calculation") {
-  if (is.null(disp_num_medicinal_product) | is.null(unit_of_presentation_num)  | is.null(presc_quantity_per_day) | is.null(subst_amount_per_form_subst1) |is.null(subst_amount_per_form_subst1_unit)) {
-    stop("For Recipe 'Prescribed quantity-DD calculation', arguments disp_num_medicinal_product, unit_of_presentation_num, presc_quantity_per_day, subst_amount_per_form_subst1 and subst_amount_per_form_subst1_unit must be specified")
-  } else if (nrow(dataframe[get(subst_amount_per_form_subst1_unit)  %!in% units_included,])>0 ) {
-    stop(paste0("The units of measurement inputted are not supported by the function (see the documentation for the complete list).Please check the input data"))
-  } 
-  #compute the specific recipe formula
-  dataframe[,(output_var):=get(disp_num_medicinal_product) * get(unit_of_presentation_num) / get(presc_quantity_per_day)]
-  
-  #compute the specific recipe formula
-  dataframe[,(output_dd1):=get(subst_amount_per_form_subst1) * get(presc_quantity_per_day)]
-  }
- #if the second active principle is present
-    if (!is.null(subst_amount_per_form_subst2)){
-      if (is.null(subst_amount_per_form_subst2_unit)) {
-        stop("For Recipe 'Prescribed quantity-DD calculation', argument subst_amount_per_form_subst2_unit must be specified")
-      } else if (nrow(dataframe[get(subst_amount_per_form_subst2_unit)  %!in% units_included,])>0 ) {
-        stop("Not all the units of measurement inputted for the second active principle are  supported by the function.Please check the input data") 
+      #compute the specific recipe formula
+      dataframe<-merge(dataframe,rescale_table,all.x=T,by.x=c(subst_amount_per_form_subst1_unit,dd_unit),by.y=c("first_unit","second_unit"))
+      if (sum(!is.na(dataframe[,rescale_factor]))>0) message("The units of measurement has been rescaled to compute the correct number of days of treatment")
+      dataframe[is.na(rescale_factor),rescale_factor:=1]
+
+      dataframe[!is.na(get(subst_amount_per_form_subst1)),(output_dd1):=get(disp_num_medicinal_product) * get(subst_amount_per_form_subst1) * get(unit_of_presentation_num) / get(output_var)*rescale_factor]
+      
+      if (!is.null(concentration_subst1)) {
+        dataframe[is.na(get(concentration_subst1)),(concentration_subst1):=0]
+
+        dataframe[,(concentration_subst1):=as.numeric(get(concentration_subst1))]
       }
-      dataframe[,(output_dd2):=get(subst_amount_per_form_subst2) * get(presc_quantity_per_day)]
+
+      dataframe[!is.na(get(concentration_subst1)) & is.na(get(output_dd1)),(output_dd1):=get(disp_num_medicinal_product) * get(concentration_subst1)* get(concentration_total_content) * get(unit_of_presentation_num) / get(output_var)*rescale_factor][,rescale_factor:=NULL]
+      setcolorder(dataframe,col_order)
+      
+      dataframe[,(output_dd1_unit):=get(subst_amount_per_form_subst1_unit)]
     }
-#if the third active principle is present
+  }
+  if (recipe == "Active substance amount per day") { 
+    # dataframe<-tolower(dataframe[,..subst_amount_per_form_unit])
+    #check that all mandatory variables are present and that all the units of measurement are supported
+    if (is.null(disp_num_medicinal_product) | is.null(subst_amount_per_form) | is.null(unit_of_presentation_num) | is.null(dd) | is.null(subst_amount_per_form_unit) | is.null(dd_unit) ) {
+      stop("For Recipe 'Substance amount' all the arguments disp_num_medicinal_product, subst_amount_per_form, unit_of_presentation_num,subst_amount_per_form_unit dd and dd_unit must be specified") #are unit of measurement also mandatory right?
+    } else if (nrow(dataframe[get(subst_amount_per_form_unit)  %!in% units_included,])>0 | nrow(dataframe[get(dd_unit) %!in% units_included,])>0 ) {
+      stop(paste0("The units of measurement inputted are not supported by the function (see the documentation for the complete list).Please check the input data"))
+    } 
+    #compute the specific recipe formula
+    dataframe<-merge(dataframe,rescale_table,all.x=T,by.x=c(subst_amount_per_form_unit,dd_unit),by.y=c("first_unit","second_unit"))
+    if (sum(!is.na(dataframe[,rescale_factor]))>0) message("The units of measurement has been rescaled to compute the correct number of days of treatment")
+    dataframe[is.na(rescale_factor),rescale_factor:=1]
+    dataframe[,(output_var):=get(disp_num_medicinal_product) * get(subst_amount_per_form) * get(unit_of_presentation_num) / get(dd)*rescale_factor][,rescale_factor:=NULL]
+    setcolorder(dataframe,col_order)
+  }
+  
+  if (recipe == "Total substance amount") {
+    if (is.null(disp_num_medicinal_product) | is.null(total_amount_per_medicinal_product)  | is.null(dd) | is.null(total_amount_per_medicinal_product_unit) | is.null(dd_unit)) {
+      stop("For Recipe 'Total substance amount', arguments disp_num_medicinal_product, total_amount_per_medicinal_product, unit_of_presentation_num, dd, total_amount_per_medicinal_product_unit and dd_unit must be specified")
+    } else if (nrow(dataframe[get(total_amount_per_medicinal_product_unit)  %!in% units_included,])>0 | nrow(dataframe[get(dd_unit) %!in% units_included,])>0 ) {
+      stop("The units of measurement inputted are not supported by the function (see the documentation for the complete list).Please check the input data") 
+    } 
+    #compute the specific recipe formula
+    dataframe<-merge(dataframe,rescale_table,all.x=T,by.x=c(total_amount_per_medicinal_product_unit,dd_unit),by.y=c("first_unit","second_unit"))
+    if (sum(!is.na(dataframe[,rescale_factor]))>0) message("The units of measurement has been rescaled to compute the correct number of days of treatment")
+    dataframe[is.na(rescale_factor),rescale_factor:=1]
+    dataframe[,(output_var):=get(disp_num_medicinal_product) * get(total_amount_per_medicinal_product) / get(dd)*rescale_factor][,rescale_factor:=NULL]
+    setcolorder(dataframe,col_order)
+  }
+  
+  if (recipe == "Prescribed quantity-DD calculation") {
+    if (is.null(disp_num_medicinal_product) | is.null(unit_of_presentation_num)  | is.null(presc_quantity_per_day) | is.null(subst_amount_per_form_subst1) |is.null(subst_amount_per_form_subst1_unit)) {
+      stop("For Recipe 'Prescribed quantity-DD calculation', arguments disp_num_medicinal_product, unit_of_presentation_num, presc_quantity_per_day, subst_amount_per_form_subst1 and subst_amount_per_form_subst1_unit must be specified")
+    } else if (nrow(dataframe[get(subst_amount_per_form_subst1_unit)  %!in% units_included,])>0 ) {
+      stop(paste0("The units of measurement inputted are not supported by the function (see the documentation for the complete list).Please check the input data"))
+    } 
+    #compute the specific recipe formula
+    dataframe[,(output_var):=get(disp_num_medicinal_product) * get(unit_of_presentation_num) / get(presc_quantity_per_day)]
+    
+    #compute the specific recipe formula
+    dataframe[,(output_dd1):=get(subst_amount_per_form_subst1) * get(presc_quantity_per_day)]
+  }
+  #if the second active principle is present
+  if (!is.null(subst_amount_per_form_subst2)){
+    if (is.null(subst_amount_per_form_subst2_unit)) {
+      stop("For Recipe 'Prescribed quantity-DD calculation', argument subst_amount_per_form_subst2_unit must be specified")
+    } else if (nrow(dataframe[get(subst_amount_per_form_subst2_unit)  %!in% units_included,])>0 ) {
+      stop("Not all the units of measurement inputted for the second active principle are  supported by the function.Please check the input data") 
+    }
+    dataframe[,(output_dd2):=get(subst_amount_per_form_subst2) * get(presc_quantity_per_day)]
+  }
+  #if the third active principle is present
   if (!is.null(subst_amount_per_form_subst3)){
     if (is.null(subst_amount_per_form_subst3_unit)) {
       stop("For Recipe 'Prescribed quantity-DD calculation', argument subst_amount_per_form_subst3_unit must be specified")
     } else if (nrow(dataframe[get(subst_amount_per_form_subst3_unit)  %!in% units_included,])>0 ) {
       stop("The units of measurement inputted for the third active principle are not supported by the function. Check the input data") 
-     }
+    }
     dataframe[,(output_dd3):=get(subst_amount_per_form_subst3) * get(presc_quantity_per_day)]
-}
-
-for (col in colnames(dataframe)){
-  if (str_detect(col,"999") ) {
-    setnames(dataframe,col,sub("999", "", col) )
   }
-}
+  
+  for (col in colnames(dataframe)){
+    if (str_detect(col,"999") ) {
+      setnames(dataframe,col,sub("999", "", col) )
+    }
+  }
   return(dataframe) 
 }
-  
+
 
