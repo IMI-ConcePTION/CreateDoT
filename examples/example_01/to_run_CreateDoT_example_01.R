@@ -27,16 +27,17 @@ input <-as.data.table(read_excel(paste0(thisdir,"/data/input.xlsx")))
 
 output <- CreateDOT(dataframe = input, 
                     recipe = "Units of presentations per day", 
-                    output_var = "CALCULATED_DoT",   #default days_of_treatment
+                    output_var = "CALCULATED_DoT",
                     disp_num_medicinal_product = "disp_num_medicinal_product",  
                     unit_of_presentation_num = "unit_of_presentation_num", 
-                    subst_amount_per_form_subst1 = "subst1_amount_per_form",
-                    subst_amount_per_form_subst1_unit = "subst1_amount_unit",
-                    concentration_subst1 = "subst1_concentration",
-                    concentration_subst1_unit = "subst1_concentration_unit",
+                    subst1_amount_per_form = "subst1_amount_per_form",
+                    subst1_amount_per_form_unit = "subst1_amount_unit",
+                    subst1_concentration = "subst1_concentration",
+                    subst1_concentration_unit = "subst1_concentration_unit",
                     concentration_total_content= "concentration_total_content",
                     dd="dd",
-                    dd_unit = "unit_dd",
+                    dd_unit = "unit_dd", #name of the column containing the chosen dd
+                    unit_of_presentation="unit_of_presentation_type",
                     output_dd1="CALCULATE_DD_subst1",
                     output_dd1_unit="CALCULATE_DD_subst1_unit"
                     )  
